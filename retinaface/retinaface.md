@@ -52,3 +52,29 @@ where $ t_i = \{t_x, t_y, t_w, t_h \} $ and $ t^*_i = \{t^*_x, t^*_y, t^*_w, t^*
 box associated with the positive anchor.
 3. Facial landmark regression loss $ L_{pts}(l_i, l^*_i) = smoothL1 (l_i, l^*_i) $, where $ l_i = \{ l_{x1}, l_{y1}, ..., l_{x5}, l_{y5}\} $ and $ l^*_i = \{ l^*_{x1}, l^*_{y1}, ..., l^*_{x5}, l^*_{y5}\} $ represent the predicted five facial landmarks and groundtruth associated with the positive anchor
 4. Dense regression loss $ L_{pixel} $: TODO
+
+$ λ_1, λ_2, λ_3 $ are set 0.25, 0.1, 0.01 which means that we increase the significance of better box and landmark locations.
+
+## Architecture 
+__RetinaFace__ using Single Stage method of Object Detection and Pyramid Network for extracting multi samples face locations and scales.
+
+![architecture_model](./img/architecture_model.png)
+Notice: In the bottom-top branch, C1 isn't shown, I think C1 is 320x320.
+
+### Feature Pyramid
+C1 to C5 is a pretrained ResNet 152 on ImageNet 11k. C6 is calculated through 3x3 conv, stride=2.
+
+P2 to P5 are computed from C2 to C5 and lateral connection. I think lateral connection is summation and Conv-Norm-ReLU of 2 inputs (I see in [FPN forward](https://github.com/biubug6/Pytorch_Retinaface/blob/master/models/net.py#L90) in a implement of RetinaFace)
+
+![lateral_connection](./img/lateral_connection.png)
+
+### Context Module
+TODO
+
+### Loss Head
+TODO 
+
+### Anchor Setting
+[Implement of Prior Box](https://github.com/biubug6/Pytorch_Retinaface/blob/master/layers/functions/prior_box.py)
+
+[Test and Note in ResNet50](./prior_box.py)
