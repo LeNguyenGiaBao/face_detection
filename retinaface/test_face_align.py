@@ -4,7 +4,6 @@ import insightface
 from insightface.app import FaceAnalysis
 from insightface.utils import face_align
 from insightface.model_zoo import RetinaFace
-from insightface.src. import face_preprocess
 # https://github.com/deepinsight/insightface/blob/ce3600a74209808017deaf73c036759b96a44ccb/recognition/arcface_mxnet/common/build_eval_pack.py#L72
 # This function is too old, might in old version (15 months ago)
 
@@ -17,11 +16,14 @@ from insightface.data import get_image as ins_get_image
 from insightface.utils import face_align
 
 if __name__ == '__main__':
-    app = FaceAnalysis(allowed_modules=['detection', 'landmark_2d_106'])
+    # app = FaceAnalysis(allowed_modules=['detection', 'landmark_2d_106'])
+    app = FaceAnalysis()
     app.prepare(ctx_id=0, det_size=(640, 640))
     # img = ins_get_image('t1')
     img = cv2.imread('./face_data/Screenshot from 2022-02-08 10-00-00.png')
     faces = app.get(img)
+    print(faces[0].embedding.shape)
+    exit()
     # face detect 
     rimg = app.draw_on(img, faces)
     cv2.imwrite('bbox.jpg', rimg)
