@@ -4,12 +4,13 @@ import insightface
 from insightface.app import FaceAnalysis
 import glob 
 import os
-import time
-import shutil
+from retinaface_cov import RetinaFaceCoV
 
 model_name = 'buffalo_m'
+gpuid = -1
 app = FaceAnalysis(name=model_name, allowed_modules=['detection']) # enable detection model only
 app.prepare(ctx_id=0, det_size=(640, 640))
+detector = RetinaFaceCoV('./model/mnet_cov2', 0, gpuid, 'net3l')
 
 data_path = glob.glob('./img/*.*')
 for path in data_path:
@@ -25,5 +26,6 @@ for path in data_path:
 
         img_face = np.zeros((height_face*2, width_face*2,3))
         img_face[height_face//2:height_face//2 + height_face, width_face//2:width_face//2+width_face] = img[y1:y2, x1:x2]
+        
         cv2.imwrite('test.jpg', img_face)
         exit()

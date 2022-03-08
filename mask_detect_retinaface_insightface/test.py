@@ -30,7 +30,8 @@ h = 700
 # detector = RetinaFaceCoV('./model/mnet_cov1', 0, gpuid, 'net3')
 detector = RetinaFaceCoV('./model/mnet_cov2', 0, gpuid, 'net3l')
 
-data_path = glob.glob('./img/*.png')
+# data_path = glob.glob('./img/*.png')
+data_path = glob.glob('./test.jpg')
 output_dir = './output'
 
 for path in data_path:
