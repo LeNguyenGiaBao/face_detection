@@ -21,3 +21,6 @@ results.print()  # or .show(), .save(), .crop(), .pandas(), etc.
 
 # results.show()
 print(results.pred[0])
+for face in results.pred[0]:
+    x1, x2, y1, y2, conf, cls = face
+    print(cls==0)
