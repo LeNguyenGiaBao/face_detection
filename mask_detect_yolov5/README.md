@@ -22,6 +22,17 @@
 - Test on Postman:
   - Import collection and upload image to see the result
 
+### API for C# 
+```
+var client = new RestClient("http://127.0.0.1:8000/detect/");
+client.Timeout = -1;
+var request = new RestRequest(Method.POST);
+request.AddParameter("name_cam", "");
+request.AddFile("image", "/home/giabao/Documents/face/face_detection/mask_detect_yolov5/test_data/img/Screenshot from 2022-03-07 23-37-01.png");
+IRestResponse response = client.Execute(request);
+Console.WriteLine(response.Content);
+```
+
 ### Result Format
 - Success 
   ```
