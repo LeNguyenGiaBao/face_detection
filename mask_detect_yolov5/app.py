@@ -51,6 +51,12 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
 
         # model forward
         pred = model_mask_detect(img).pred[0]
+        if pred.shape[0] == 0: # no face
+            return jsonable_encoder({
+                "code": 200,
+                "data": 2,
+                "msg": "No Face"
+            }) 
 
         # assumption main face is the biggest face -> sort by face area
         # NOTE: save all face 
