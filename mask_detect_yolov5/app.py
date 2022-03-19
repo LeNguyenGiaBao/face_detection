@@ -66,15 +66,18 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
         
         elif cls == 0:  # 0: no mask
             face_detect = model_face_detect.get(img)
-            x1, y1, x2, y2 = face_detect[0]['bbox']
+            x1, y1, x2, y2 = face_detect[0]['bbox'].astype(int)
+            width = x2-x1
+            height = y2-y1
             return jsonable_encoder({
                 "code": 200,
                 "data": 0,
                 "msg": "No Mask", 
-                'x1': int(x1), 
-                'y1': int(y1),
-                'x2': int(x2), 
-                'y2': int(y2)
+                'box1': '{},{},{},{}'.format(x1,y1,width, height),
+                # 'x1': int(x1), 
+                # 'y1': int(y1),
+                # 'x2': int(x2), 
+                # 'y2': int(y2)
             })
             # no mask: send result for save image -> face verify
 
