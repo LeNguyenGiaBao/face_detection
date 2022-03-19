@@ -40,6 +40,10 @@ Console.WriteLine(response.Content);
     "code": 200,  # success
     "data": 0,    # 0 with no mask and 1 with mask
     "msg": "No Mask"
+    "x1": x1,
+    "y1": y1,
+    "x2": x2,
+    "y2": y2,
   }
   ```
   
@@ -53,3 +57,7 @@ Console.WriteLine(response.Content);
   ```
   
 I try to test with many boundary case, if you test and meet bug that shut down the API, please contact me!!!
+
+### Update 22_03_19:
+- add bbox with no mask face
+- TODO: make with 2 facé.
