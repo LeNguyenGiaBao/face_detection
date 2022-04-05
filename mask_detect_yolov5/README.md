@@ -37,10 +37,18 @@ Console.WriteLine(response.Content);
 - Success 
   ```
   {
-    "code": 200,  # success
-    "data": 0,    # 0 with no mask and 1 with mask
+    "code": 200,                # success
+    "data": 0,                  # 0 with no mask and 1 with mask
     "msg": "No Mask"
-    "box1": "408,243,98,114",
+    "box1": "408,243,98,114",   # bbox info with both mask and no mask
+  }
+  ```
+  
+  ```
+  {
+    "code": 200,
+    "data": 2,
+    "msg": "No Face"
   }
   ```
   
@@ -57,4 +65,8 @@ I try to test with many boundary case, if you test and meet bug that shut down t
 
 ### Update 22_03_19:
 - add bbox with no mask face
-- TODO: make with 2 facé.
+- TODO: make with 2 faces.
+
+### Update 22_04_05:
+- add bbox with mask face
+- check face detect: if face detection check fail (because the image is cropped so narrow) -> return "No Face"
