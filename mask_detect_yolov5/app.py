@@ -64,14 +64,33 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
         cls = pred[5].item()
         
         if cls == 1:    # 1: mask 
+            face_detect = model_face_detect.get(img)
+            if face_detect == []:
+                return jsonable_encoder({
+                    "code": 200,
+                    "data": 2,
+                    "msg": "No Face"
+                })
+
+            x1, y1, x2, y2 = face_detect[0]['bbox'].astype(int)
+            width = x2-x1
+            height = y2-y1
             return jsonable_encoder({
                 "code": 200,
                 "data": 1,
-                "msg": "With Mask"
+                "msg": "With Mask", 
+                'box1': '{},{},{},{}'.format(x1,y1,width, height),
             }) 
         
         elif cls == 0:  # 0: no mask
             face_detect = model_face_detect.get(img)
+            if face_detect == []:
+                return jsonable_encoder({
+                    "code": 200,
+                    "data": 2,
+                    "msg": "No Face"
+                })
+                
             x1, y1, x2, y2 = face_detect[0]['bbox'].astype(int)
             width = x2-x1
             height = y2-y1
