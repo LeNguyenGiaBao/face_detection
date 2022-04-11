@@ -8,7 +8,8 @@ import uvicorn
 from insightface.app import FaceAnalysis
 
 # Model
-model_mask_detect = torch.hub.load('ultralytics/yolov5', 'custom', './weights/best.pt', force_reload=False)  # or yolov5m, yolov5l, yolov5x, custom
+# model_mask_detect = torch.hub.load('ultralytics/yolov5', 'custom', './weights/best.pt')  # or yolov5m, yolov5l, yolov5x, custom
+model_mask_detect = torch.hub.load('~/.cache/torch/hub/ultralytics_yolov5_master/', 'custom', './weights/best.pt', source='local')  # or yolov5m, yolov5l, yolov5x, custom
 model_name = 'buffalo_m'
 model_face_detect = FaceAnalysis(name=model_name, allowed_modules=['detection']) # enable detection model only
 model_face_detect.prepare(ctx_id=0, det_size=(640, 640))
