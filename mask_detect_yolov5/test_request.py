@@ -1,35 +1,24 @@
 import requests
 import time 
+import glob
+import os
 
 url = "http://127.0.0.1:8000/detect/"
 t0 = time.time()
 
-for i in range(50):
-    t = time.time()
-
+for i in glob.glob('./test_data/img/*'):
+    file_name = os.path.split(i)[1]
     payload={'name_cam': ''}
     files=[
-    ('image',('Screenshot from 2022-03-07 23-37-31.png',open('/home/giabao/Documents/face/face_detection/mask_detect_yolov5/test_data/img/Screenshot from 2022-03-07 23-37-31.png','rb'),'image/png'))
+    ('image',(file_name,open(i,'rb'),'image/png'))
     ]
-    print(files)
     headers = {}
 
+    t1 = time.time()
     response = requests.request("POST", url, headers=headers, data=payload, files=files)
-    t2 = time.time() - t
+    t2 = time.time() - t1
     print(response.text, t2)
-
     
-    t = time.time()
-
-    payload={'name_cam': ''}
-    files=[
-    ('image',('face_1_in.jpg',open('/home/giabao/Documents/face/face_detection/mask_detect_yolov5/test_data/img/face_1_in.jpg','rb'),'image/jpg'))
-    ]
-    print(files)
-    headers = {}
-
-    response = requests.request("POST", url, headers=headers, data=payload, files=files)
-    t2 = time.time() - t
-    print(response.text, t2)
-
-print(time.time() - t0)
+total_time = time.time() - t0
+print(str(total_time) + 's')
+print(str(total_time/len(glob.glob('./test_data/img/*'))) + 's/img')
