@@ -1,5 +1,23 @@
 # Mask detection using Yolov5
 
+#### Update 22_04_11:
+- add padding to box, default 5%
+- send padding value to box1 message (see above)
+- load model yolov5 from [cache](https://github.com/LeNguyenGiaBao/face_detection/blob/master/mask_detect_yolov5/app.py#L13), need internet for the first time (to load model)
+- Time to run 71 images randomly is 26.67s -> 0.37s/image
+
+
+#### Update 22_04_05:
+- add bbox with mask face
+- check face detect: if face detection check fail (because the image is cropped so narrow) -> return "No Face"
+
+
+#### Update 22_03_19:
+- add bbox with no mask face
+- TODO: make with 2 faces.
+
+
+
 ### Data from [@waittim/mask-detector](https://github.com/waittim/mask-detector/tree/master/modeling/data)
 
 ### How to use
@@ -40,7 +58,7 @@ Console.WriteLine(response.Content);
     "code": 200,                # success
     "data": 0,                  # 0 with no mask and 1 with mask
     "msg": "No Mask"
-    "box1": "408,243,98,114",   # bbox info with both mask and no mask
+    "box1": "408,243,98,114,0.05",   # bbox info with both mask and no mask. 0.05: PADDING_RATIO
   }
   ```
   
@@ -63,10 +81,3 @@ Console.WriteLine(response.Content);
   
 I try to test with many boundary case, if you test and meet bug that shut down the API, please contact me!!!
 
-### Update 22_03_19:
-- add bbox with no mask face
-- TODO: make with 2 faces.
-
-### Update 22_04_05:
-- add bbox with mask face
-- check face detect: if face detection check fail (because the image is cropped so narrow) -> return "No Face"
