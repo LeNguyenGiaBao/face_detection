@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 import asyncio
 import uvicorn
 from insightface.app import FaceAnalysis
-from utils_file import get_bbox
+from utils_file import get_bbox, get_landmark
 
 # Model
 # model_mask_detect = torch.hub.load('ultralytics/yolov5', 'custom', './weights/best.pt')  # or yolov5m, yolov5l, yolov5x, custom
@@ -14,7 +14,7 @@ model_mask_detect = torch.hub.load(torch.hub.get_dir() + '/ultralytics_yolov5_ma
 model_name = 'buffalo_m'
 model_face_detect = FaceAnalysis(name=model_name, allowed_modules=['detection']) # enable detection model only
 model_face_detect.prepare(ctx_id=0, det_size=(640, 640))
-PADDING_RATIO = 0.05
+PADDING_RATIO = 0
 
 # Fast API
 app = FastAPI()
@@ -66,7 +66,7 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
         if face_detect == []: # no face
             return jsonable_encoder({
                 "code": 200,
-                "data": 2,
+                "data": 3,
                 "msg": "No Face"
             }) 
 
@@ -78,19 +78,20 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
 
         x1, y1, x2, y2 = face_detect[0]['bbox'].astype(int)
         x_box, y_box, w_box, h_box = get_bbox(x1, y1, x2, y2, img_width, img_height, PADDING_RATIO)
+        
         landmark = face_detect[0]['kps'].astype(int)
-        landmark_flatten = landmark.flatten()
+        landmark_string = get_landmark(landmark, x_box, y_box)
 
         # # restore original landmark
         # landmark = landmark_flatten.reshape((5, 2))
-        print(landmark)
+
         if cls == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,
                 "data": 1,
                 "msg": "With Mask", 
                 'box1': '{},{},{},{}'.format(x_box, y_box, w_box, h_box),
-                'landmark1': '{},{},{},{},{},{},{},{},{},{}'.format(landmark_flatten[0], landmark_flatten[1], landmark_flatten[2], landmark_flatten[3], landmark_flatten[4], landmark_flatten[5], landmark_flatten[6], landmark_flatten[7], landmark_flatten[8], landmark_flatten[9]),
+                'landmark1': landmark_string
             }) 
         
         elif cls == 0:  # 0: no mask
@@ -99,7 +100,7 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "data": 0,
                 "msg": "No Mask", 
                 'box1': '{},{},{},{}'.format(x_box, y_box, w_box, h_box),
-                'landmark1': '{},{},{},{},{},{},{},{},{},{}'.format(landmark_flatten[0], landmark_flatten[1], landmark_flatten[2], landmark_flatten[3], landmark_flatten[4], landmark_flatten[5], landmark_flatten[6], landmark_flatten[7], landmark_flatten[8], landmark_flatten[9]),
+                'landmark1': landmark_string
             }) 
 
     except Exception as e:

@@ -24,3 +24,13 @@ def get_bbox(x1, y1, x2, y2, img_width, img_height, padding_ratio):
     width = int(x2 - x) 
     height = int(y2 - y) 
     return x, y, width, height
+
+def get_landmark(landmark, x_box, y_box):
+    landmark[:, 0] = landmark[:, 0] - x_box
+    landmark[:, 1] = landmark[:, 1] - y_box
+
+    landmark_flatten = landmark.flatten()
+    landmark_list = list(landmark_flatten)
+    landmark_string = ','.join(map(str,landmark_list))
+
+    return landmark_string
