@@ -1,5 +1,8 @@
 # Mask detection using Yolov5
 
+#### Update 22_05_03:
+- modify landmark: relative position by top left bbox
+
 #### Update 22_04_24:
 - add landmark to response
 - remove padding from response
@@ -62,8 +65,8 @@ Console.WriteLine(response.Content);
     "code": 200,                # success
     "data": 0,                  # 0 with no mask and 1 with mask
     "msg": "No Mask"
-    "box1": "408,243,98,114,0.05",   # bbox info with both mask and no mask. 0.05: PADDING_RATIO
-    "landmark1": "725,573,780,563,758,605,744,630,784,622"
+    "box1": "408,243,98,114",   # bbox info with both mask and no mask. 
+    "landmark1": "21,46,62,41,44,70,33,86,62,82"   # relative position by top left box1
   }
   ```
   
