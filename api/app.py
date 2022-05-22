@@ -12,7 +12,7 @@ from get_mask import get_mask
 
 # config
 FACE_DETECT_MODEL = 'yunet' # or 'retina'
-MASK_DETECT_MODEL = 'yolov5' 
+MASK_DETECT_MODEL = 'yolov5' # or 'ssd' ()
 PADDING_RATIO = 0
 
 # load model 
@@ -78,7 +78,9 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "data": 1,
                 "msg": "With Mask", 
                 'box1': bbox,
-                'landmark1': landmark
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
             }) 
         
         elif is_mask == 0:  # 0: no mask
@@ -87,7 +89,9 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "data": 0,
                 "msg": "No Mask", 
                 'box1': bbox,
-                'landmark1': landmark
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
             }) 
 
     except Exception as e:
@@ -99,14 +103,5 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
             })
 
 if __name__ == "__main__":
-    # Scale
-    # x = 650
-    # y = 250
-    # w = 700
-    # h = 700
-
-    # Model
-    # model = torch.hub.load('ultralytics/yolov5', 'custom', './weights/best.pt')  # or yolov5m, yolov5l, yolov5x, custom
-
     # run API
     uvicorn.run('app:app', host="0.0.0.0", port=8000, reload=True)
