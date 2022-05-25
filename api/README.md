@@ -2,6 +2,13 @@
 
 ## API 
 
+#### Update 22_05_26:
+- Mask classify: VGG16 onnx model, base on Tensorflow
+- Total time 2.7675187587738037
+- Total file 30
+- Time per image 0.09225062529246013
+
+
 #### Update 22_05_22:
 - Refactor code of api
 - Can choose face model and mask model
