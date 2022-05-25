@@ -24,6 +24,12 @@ print("Total time", t2 - t1)
 print("Total file", num_files)
 print("Time per image", (t2-t1)/num_files)
 
+# yunet + yolov5
 # Total time 8.324703931808472
 # Total file 30
 # Time per image 0.27749013106028236
+
+# yunet + vgg classify
+# Total time 2.7675187587738037
+# Total file 30
+# Time per image 0.09225062529246013

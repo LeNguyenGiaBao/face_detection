@@ -8,6 +8,18 @@ def get_relative_landmark(landmark, x_box, y_box):
     landmark_string = ','.join(map(str,landmark_list))
 
     return landmark_string
+    
+
+def get_croped_face(img, bbox):
+    x_box, y_box, w_box, h_box = bbox.split(',')
+    x_box = int(x_box)
+    y_box = int(y_box)
+    w_box = int(w_box)
+    h_box = int(h_box)
+    croped_face = img[y_box:y_box+h_box, x_box:x_box+w_box]
+
+    return croped_face
+
 
 def get_face(model_name, model, img):
     img_height, img_width = img.shape[0], img.shape[1]

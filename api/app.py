@@ -7,12 +7,12 @@ from fastapi.encoders import jsonable_encoder
 import asyncio
 import uvicorn
 from model import load_face_detect_model, load_mask_detect_model
-from get_face import get_face
+from get_face import get_face, get_croped_face
 from get_mask import get_mask
 
 # config
 FACE_DETECT_MODEL = 'yunet' # or 'retina'
-MASK_DETECT_MODEL = 'yolov5' # or 'ssd' ()
+MASK_DETECT_MODEL = 'yolov5' # or 'yolov5'
 PADDING_RATIO = 0
 
 # load model 
@@ -53,14 +53,6 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "error_code": 3,
                 "msg": "Input is not an image"
             })
-
-        is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, img)  # img is RGB??? img must be RGB
-        if is_mask is None:
-            return jsonable_encoder({
-                "code": 200,
-                "data": 2,
-                "msg": "No Face"
-            }) 
         
         is_face = get_face(FACE_DETECT_MODEL, face_detect_model, img)
         if is_face is None:
@@ -71,7 +63,16 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
             }) 
 
         bbox, landmark = is_face
+        croped_face = get_croped_face(img, bbox)
+        if croped_face is None:
+            return jsonable_encoder({
+                "code": 200,
+                "data": 2,
+                "msg": "No Face"
+            }) 
 
+        is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
+        
         if is_mask == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,
@@ -88,6 +89,16 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "code": 200,
                 "data": 0,
                 "msg": "No Mask", 
+                'box1': bbox,
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
+            }) 
+        else:
+            return jsonable_encoder({
+                "code": 200,
+                "data": is_mask,
+                "msg": "", 
                 'box1': bbox,
                 'landmark1': landmark, 
                 'face_model': FACE_DETECT_MODEL,

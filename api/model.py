@@ -1,5 +1,6 @@
 import cv2
 import torch 
+import onnxruntime as rt
 
 def load_retinaface(weight_path):
     pass
@@ -23,6 +24,12 @@ def load_yunet(weight_path='./weight/face_yunet/yunet.onnx'):
 
     return model 
 
+def load_vgg(weight_path='./weight/mask_vgg/vgg16_18_0.73.onnx'):
+    providers = ['CPUExecutionProvider']
+    model = rt.InferenceSession(weight_path, providers=providers)
+
+    return model 
+
 def load_face_detect_model(model_name):
     if model_name == 'yunet':
         return load_yunet()
@@ -32,3 +39,5 @@ def load_face_detect_model(model_name):
 def load_mask_detect_model(model_name):
     if model_name == 'yolov5':
         return load_yolov5()
+    elif model_name == 'vgg':
+        return load_vgg()
