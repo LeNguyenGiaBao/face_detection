@@ -14,7 +14,7 @@ Face detection in parking lot:
 ### Timing
 - Yunet + vgg classifier: 0.09225062529246013 
 - Yunet + yolov5: 0.27749013106028236
-- [PC]: Yunet + vgg classifier: 0.030095094839731853 (reduce 3 times)
+- [PC]: Yunet + vgg classifier: 0.029399174891923 (reduce 3 times) (CPU 58%, GPU 15%)
 - Note: 
     - [PC]: i5-9400F, 8gb RAM, GTX 1650 4gb
     - [Laptop]: i5-8265U, 12gb RAM, MX 230 2gb
