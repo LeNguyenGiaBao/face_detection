@@ -4,8 +4,8 @@
 
 ### Idea
 Use 2 models for 2 tasks:
-- Face detection: Yunet
-- Mask detection: VGG 
+- Face detection: Yunet, RetinaFace
+- Mask detection: VGG, YoloV5
 
 Face detection in parking lot:
 - Get face from image
