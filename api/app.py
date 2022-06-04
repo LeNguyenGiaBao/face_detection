@@ -33,6 +33,7 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         if image == "":
             return jsonable_encoder({
                 "code": 201,
+                'name_cam': name_cam,
                 "error_code": 1,
                 "msg": "Missing Input Image"
             })
@@ -45,6 +46,7 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         if img is None:
             return jsonable_encoder({
                 "code": 201,
+                'name_cam': name_cam,
                 "error_code": 3,
                 "msg": "Input is not an image"
             })
@@ -53,8 +55,9 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         if is_face is None:
             return jsonable_encoder({
                 "code": 200,
+                'name_cam': name_cam,
                 "data": 2,
-                "msg": "No Face"
+                "msg": "No Face",
             }) 
 
         bbox, landmark = is_face
@@ -62,15 +65,17 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         if croped_face is None:
             return jsonable_encoder({
                 "code": 200,
+                'name_cam': name_cam,
                 "data": 2,
-                "msg": "No Face"
+                "msg": "No Face",
             }) 
 
         is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
-        print(bbox)
+
         if is_mask == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,
+                'name_cam': name_cam,
                 "data": 1,
                 "msg": "With Mask", 
                 'box1': bbox,
@@ -82,6 +87,7 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         elif is_mask == 0:  # 0: no mask
             return jsonable_encoder({
                 "code": 200,
+                'name_cam': name_cam,
                 "data": 0,
                 "msg": "No Mask", 
                 'box1': bbox,
@@ -92,6 +98,7 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         else:
             return jsonable_encoder({
                 "code": 200,
+                'name_cam': name_cam,
                 "data": is_mask,
                 "msg": "", 
                 'box1': bbox,
@@ -104,6 +111,104 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
         print(e)
         return jsonable_encoder({
                 "code": 201,
+                'name_cam': name_cam,
+                "error_code": 0,
+                "msg": str(e)
+            })
+
+@app.post("/detect_file/")
+async def detect_file(name_cam: str = Form(""), image: UploadFile = File(None)):
+    try:
+        if image == None:
+            return jsonable_encoder({
+                "code": 201,
+                'name_cam': name_cam,
+                "error_code": 1,
+                "msg": "Missing Input Image"
+            })
+
+        contents = await asyncio.wait_for(image.read(), timeout=1) 
+        if(str(contents) =="b''"):
+            return jsonable_encoder({
+                "code": 201,
+                'name_cam': name_cam,
+                "error_code": 2,
+                "msg": "Not found file"
+            })
+        
+        # # check image
+        nparr = np.frombuffer(contents, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        if img is None:
+            return jsonable_encoder({
+                "code": 201,
+                'name_cam': name_cam,
+                "error_code": 3,
+                "msg": "Input is not an image"
+            })
+        
+        is_face = get_face(FACE_DETECT_MODEL, face_detect_model, img)
+        if is_face is None:
+            return jsonable_encoder({
+                "code": 200,
+                'name_cam': name_cam,
+                "data": 2,
+                "msg": "No Face",
+            }) 
+
+        bbox, landmark = is_face
+        croped_face = get_croped_face(img, bbox)
+        if croped_face is None:
+            return jsonable_encoder({
+                "code": 200,
+                'name_cam': name_cam,
+                "data": 2,
+                "msg": "No Face",
+            }) 
+
+        is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
+
+        if is_mask == 1:    # 1: mask 
+            return jsonable_encoder({
+                "code": 200,
+                'name_cam': name_cam,
+                "data": 1,
+                "msg": "With Mask", 
+                'box1': bbox,
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
+            }) 
+        
+        elif is_mask == 0:  # 0: no mask
+            return jsonable_encoder({
+                "code": 200,
+                'name_cam': name_cam,
+                "data": 0,
+                "msg": "No Mask", 
+                'box1': bbox,
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
+            }) 
+        else:
+            return jsonable_encoder({
+                "code": 200,
+                'name_cam': name_cam,
+                "data": is_mask,
+                "msg": "", 
+                'box1': bbox,
+                'landmark1': landmark, 
+                'face_model': FACE_DETECT_MODEL,
+                'mask_model': MASK_DETECT_MODEL,
+            }) 
+
+    except Exception as e:
+        print(e)
+        return jsonable_encoder({
+                "code": 201,
+                'name_cam': name_cam,
                 "error_code": 0,
                 "msg": str(e)
             })
