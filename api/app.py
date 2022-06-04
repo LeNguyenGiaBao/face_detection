@@ -1,4 +1,4 @@
-import torch
+# import torch
 import cv2 
 import numpy as np
 
@@ -6,13 +6,14 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.encoders import jsonable_encoder
 import asyncio
 import uvicorn
+import base64
 from model import load_face_detect_model, load_mask_detect_model
 from get_face import get_face, get_croped_face
 from get_mask import get_mask
 
 # config
 FACE_DETECT_MODEL = 'yunet' # or 'retina'
-MASK_DETECT_MODEL = 'yolov5' # or 'yolov5'
+MASK_DETECT_MODEL = 'vgg' # or 'yolov5'
 PADDING_RATIO = 0
 
 # load model 
@@ -27,26 +28,20 @@ def index():
     return {"name" : "giabao"}
 
 @app.post("/detect/")
-async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
+async def detect(name_cam: str = Form(""), image: str = Form("")):
     try:
-        if image == None:
+        if image == "":
             return jsonable_encoder({
                 "code": 201,
                 "error_code": 1,
                 "msg": "Missing Input Image"
             })
-
-        contents = await asyncio.wait_for(image.read(), timeout=1) 
-        if(str(contents) =="b''"):
-            return jsonable_encoder({
-                "code": 201,
-                "error_code": 2,
-                "msg": "Not found file"
-            })
         
-        # check image
+        # # check image
+        contents = base64.b64decode(image)
         nparr = np.frombuffer(contents, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
         if img is None:
             return jsonable_encoder({
                 "code": 201,
@@ -72,7 +67,7 @@ async def detect(name_cam: str = Form(""), image: UploadFile = File(None)):
             }) 
 
         is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
-        
+        print(bbox)
         if is_mask == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,
