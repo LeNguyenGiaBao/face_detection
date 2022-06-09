@@ -12,13 +12,13 @@ from get_face import get_face, get_croped_face
 from get_mask import get_mask
 
 # config
-FACE_DETECT_MODEL = 'yunet' # or 'retina'
+FACE_DETECT_MODEL = 'retina' # or 'retina'
 MASK_DETECT_MODEL = 'vgg' # or 'yolov5'
 PADDING_RATIO = 0
 
 # load model 
 face_detect_model = load_face_detect_model(FACE_DETECT_MODEL)
-mask_detect_model = load_mask_detect_model(MASK_DETECT_MODEL)
+# mask_detect_model = load_mask_detect_model(MASK_DETECT_MODEL)
 
 # Fast API
 app = FastAPI()
@@ -61,6 +61,7 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
             }) 
 
         bbox, landmark = is_face
+        print(bbox)
         croped_face = get_croped_face(img, bbox)
         if croped_face is None:
             return jsonable_encoder({
@@ -70,8 +71,8 @@ async def detect(name_cam: str = Form(""), image: str = Form("")):
                 "msg": "No Face",
             }) 
 
-        is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
-
+        # is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
+        is_mask = 0
         if is_mask == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,
@@ -167,8 +168,8 @@ async def detect_file(name_cam: str = Form(""), image: UploadFile = File(None)):
                 "msg": "No Face",
             }) 
 
-        is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
-
+        # is_mask = get_mask(MASK_DETECT_MODEL, mask_detect_model, croped_face)
+        is_mask = 0
         if is_mask == 1:    # 1: mask 
             return jsonable_encoder({
                 "code": 200,

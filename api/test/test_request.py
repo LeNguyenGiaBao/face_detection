@@ -3,11 +3,11 @@ import glob
 import time 
 import os 
 
-url = "http://0.0.0.0:8000/detect/"
+url = "http://127.0.0.1:8000/detect/"
 
-num_files = len(glob.glob('/home/giabao/Documents/face/face_verification/data/original_data/*/*.*'))
+num_files = len(glob.glob(r'F:\a_kltn\code\original_face\*.*'))
 t1 = time.time()
-for file_path in glob.glob('/home/giabao/Documents/face/face_verification/data/original_data/*/*.*'):
+for file_path in glob.glob(r'F:\a_kltn\code\original_face\*.*'):
     file_name = os.path.split(file_path)[1]
     payload={'name_cam': ''}
     files=[
