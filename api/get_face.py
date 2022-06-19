@@ -1,3 +1,5 @@
+import numpy as np 
+
 def get_relative_landmark(landmark, x_box, y_box):
     landmark = landmark.reshape(-1, 2)
     landmark[:, 0] = landmark[:, 0] - x_box
@@ -41,6 +43,9 @@ def get_face(model_name, model, img):
         # get the biggest face
         face_detect_sorted = sorted(face_detect, key=lambda x:(x[2]*x[3]), reverse=True)[0]
         x_box, y_box, w_box, h_box = face_detect_sorted[:4].astype(int)
+        if w_box < 40 or h_box < 40:
+            return None
+            
         bbox = '{},{},{},{}'.format(x_box, y_box, w_box, h_box)
 
         landmark = face_detect_sorted[4:14].astype(int)  # 1-d array
@@ -53,24 +58,29 @@ def get_face(model_name, model, img):
     if model_name == "center":
         face_detect, lms = model(img, img_height, img_width, threshold=0.35)
 
-        if face_detect == []:
+        if face_detect.shape[0] == 0:
             return None 
 
         # get the biggest face
         face_detect_sorted = sorted(face_detect, key=lambda x:((x[2]-x[0])*(x[3]-x[1])), reverse=True)[0]
+        rows, cols = np.where(face_detect == face_detect_sorted)
         x1, y1, x2, y2 = face_detect_sorted[:4].astype(int)
         x_box, y_box, w_box, h_box = convert_x2y2_to_width_height(x1,y1,x2,y2)
+        if w_box < 40 or h_box < 40:
+            return None
+            
         bbox = '{},{},{},{}'.format(x_box, y_box, w_box, h_box)
 
         # TODO: make landmark after sort
-        relative_landmark = ""
+        landmark = lms[rows[0]].astype(int)
+        relative_landmark = get_relative_landmark(landmark, x_box, y_box)
 
         return (bbox, relative_landmark)
 
     if model_name == "retina":
         face_detect = model.get(img)
 
-        if face_detect == []:
+        if face_detect.shape[0] == 0:
             return None 
 
         face_detect_sorted = sorted(face_detect, key=lambda x:((x['bbox'][2]-x['bbox'][0])* (x['bbox'][3]-x['bbox'][1])), reverse=True)[0]
