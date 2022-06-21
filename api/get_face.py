@@ -1,5 +1,6 @@
 import numpy as np 
 
+PADDING = 50 # pixel
 def get_relative_landmark(landmark, x_box, y_box):
     landmark = landmark.reshape(-1, 2)
     landmark[:, 0] = landmark[:, 0] - x_box
@@ -25,6 +26,11 @@ def get_croped_face(img, bbox):
 def convert_x2y2_to_width_height(x1, y1, x2, y2):
     w = x2 - x1
     h = y2 - y1
+
+    x1 = x1 - PADDING
+    y1 = y1 - PADDING
+    w = w + 2*PADDING
+    h = h + 2*PADDING
     
     return x1, y1, w, h
 
@@ -66,7 +72,10 @@ def get_face(model_name, model, img):
         rows, cols = np.where(face_detect == face_detect_sorted)
         x1, y1, x2, y2 = face_detect_sorted[:4].astype(int)
         x_box, y_box, w_box, h_box = convert_x2y2_to_width_height(x1,y1,x2,y2)
-        if w_box < 40 or h_box < 40:
+        if w_box < 40 + 2 * PADDING or h_box < 40 + 2 * PADDING:
+            return None
+        
+        if x_box < 0 or y_box < 0 or x_box + w_box > img_width or y_box + h_box > img_height:
             return None
             
         bbox = '{},{},{},{}'.format(x_box, y_box, w_box, h_box)
